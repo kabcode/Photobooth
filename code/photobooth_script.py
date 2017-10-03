@@ -2,7 +2,7 @@
 # created by kabcode@gmail.com
 # information and further details can be found under www.kabelitzens.de
 
-# this is a skript for a interaktiv photobooth
+# this is a skript for a interactive photobooth
 
 # imports
 from constants import SUCCESS, FAILURE
@@ -173,7 +173,7 @@ def start_photobooth_A(image_path):
     # start taking the photo
     show_image(smile_image)
     time.sleep(0.5)
-    image_name = time.strftime('%H_%m_%S.jpg')
+    image_name = time.strftime('%H_%M_%S.jpg')
     storageLocation = image_path + image_name
     
     try:
