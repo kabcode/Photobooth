@@ -14,6 +14,7 @@ import os
 import pygame
 import math
 import random
+import shutil
 
 #####################
 ###   variables   ###
@@ -38,6 +39,7 @@ smile_image  = 'booth_images/smile_en.png'
 done_image   = 'booth_images/done_en.png' 
 saving_image = 'booth_images/saving_en.png'
 error_image  = 'booth_images/error_en.png'
+smiley_image  = 'booth_images/smile.png'
 
 
 #####################
@@ -46,17 +48,18 @@ error_image  = 'booth_images/error_en.png'
 # setup the wiimote connection
 def prepareWiiRemote():
     show_image(connect_image)
-    time.sleep(3)
+    time.sleep(1)
     try:
+        print("Connecting!")
         wii = cwiid.Wiimote()
     except:
-        show_image(error_image)
+        show_error_image(error_image)
         return None
 
     wii.rumble = 1
     time.sleep(1)
     wii.rumble = 0
-    #print ('Wii Remote connected...\n')
+    print ('Wii Remote connected...\n')
     # set wiimote in button mode
     wii.rpt_mode = cwiid.RPT_BTN    
     return wii
@@ -69,7 +72,7 @@ def stopWiimoteConnection(wii):
         time.sleep(0.5)
         wii.rumble = 0
         time.sleep(0.5)
-        exit(wii)
+        wii.close()
         sys.exit()
 
 # setup data storage for this eventbased on the date
@@ -80,6 +83,7 @@ def setupDataStorage():
         return image_path
     else:
         os.makedirs(image_path)
+        shutil.copy2(smiley_image,image_path)
         return image_path
 
 # init pygame to use the module
@@ -102,6 +106,23 @@ def show_image(image_path):
     screen.blit(img,(offset_x,offset_y))
     pygame.display.flip()
 
+# if an error occured show the error image and then close the image after 30 seconds and quit
+def show_error_image(image_path):
+    screen_size = init_pygame()
+    img = pygame.image.load(image_path)
+    # following lines moving image to the center of screen
+    imgSize = img.get_size()
+    offset_x = (screen_size[0] - imgSize[0])/2
+    offset_y = (screen_size[1] - imgSize[1])/2
+    #screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+    screen = pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
+    screen.blit(img,(offset_x,offset_y))
+    pygame.display.flip()
+    time.sleep(10)
+    pygame.quit()
+    print("The programm was shut down due an error. Nothing went wrong.\n Please try to restart.")
+    sys.exit()
+
 # show taken images on start screen
 def show_image_start_screen(image_path):
     screen_size = init_pygame()
@@ -118,9 +139,7 @@ def show_image_start_screen(image_path):
 # check connection to wiimote
 def checkConnection(wii):
     if(wii==None):
-        image_schow(error_image)
-        time.sleep(20)
-        sys.exit()
+        image_error_schow(error_image)
 
 ##########################################  
 # the main photobooth programm.          #
@@ -142,7 +161,7 @@ def start_photobooth_A(image_path):
         
     except all:
         print("Problem!")
-        show_image(error_image)
+        show_error_image(error_image)
         
     show_image(count3_image)
     time.sleep(count_time)
@@ -184,9 +203,7 @@ def start_photobooth_A(image_path):
 wii = prepareWiiRemote()
 # if remote is not useable exit program with error message
 if(wii == None):
-    show_image(error_image)
-    time.sleep(30)
-    sys.exit();
+    show_error_image(error_image)
 
 # set the parameter for data storage
 # real_path is were the images are stored
@@ -208,6 +225,7 @@ while True:
     if (buttons - cwiid.BTN_PLUS - cwiid.BTN_MINUS == 0):
         pygame.display.quit()
         stopWiimoteConnection(wii)
+        sys.exit();
 
     # IF "A" button is pressed start the photobooth action
     if(buttons & cwiid.BTN_A):
