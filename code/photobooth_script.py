@@ -27,19 +27,23 @@ delay_time = 0.5
 restart_delay = 5
 count_time = 0.4
 
-# image paths
-connect_image = 'booth_images/connect_en.png'
-start_image = 'booth_images/started_en.png'
-instruction_image = 'booth_images/Instructions_en.png'
-blank_image  = 'booth_images/blank.png'
-count3_image = 'booth_images/count3.png'
-count2_image = 'booth_images/count2.png'
-count1_image = 'booth_images/count1.png'
-smile_image  = 'booth_images/smile_en.png'
-done_image   = 'booth_images/done_en.png' 
-saving_image = 'booth_images/saving_en.png'
-error_image  = 'booth_images/error_en.png'
-smiley_image  = 'booth_images/smile.png'
+# default variables
+image_path = '../images/'
+default_language = 'en'
+pygame.surface = None
+
+# images
+image_blank = 'blank.png'
+image_count1 = 'count1.png'
+image_count2 = 'count2.png'
+image_count3 = 'count3.png'
+image_smiley = 'smiley.png'
+image_connect = '_connect.png'
+image_started = '_started'
+image_error = '_error.png'
+image_instruction = '_instruction'
+image_saving = '_saving.png'
+image_smile = '_smile.png'
 
 
 #####################
@@ -83,7 +87,7 @@ def setupDataStorage():
         return image_path
     else:
         os.makedirs(image_path)
-        shutil.copy2(smiley_image,image_path)
+        shutil.copy2(image_smiley,image_path)
         return image_path
 
 # init pygame to use the module
@@ -139,7 +143,7 @@ def show_image_start_screen(image_path):
 # check connection to wiimote
 def checkConnection(wii):
     if(wii==None):
-        image_error_schow(error_image)
+        show_error_image(image_error)
 
 ##########################################  
 # the main photobooth programm.          #
@@ -221,15 +225,21 @@ while True:
     # wait for input via the buttons
     buttons = wii.state['buttons']
 
-    # If Plus and Minus buttons pressed together
+    # if "+" and "-" buttons pressed together, shut down photobooth
     if (buttons - cwiid.BTN_PLUS - cwiid.BTN_MINUS == 0):
         pygame.display.quit()
         stopWiimoteConnection(wii)
         sys.exit();
 
-    # IF "A" button is pressed start the photobooth action
+    # if "A" button is pressed, start the photobooth action
     if(buttons & cwiid.BTN_A):
         start_photobooth_A(image_path)
+
+    # if the left or right button are pressed, switch language
+    if(buttons - cwiid.BTN_left)
+        default_language = 'de'
+    if(buttons - cwiid.BTN_right)
+        default_language = 'en'
 
     # check if wii connection is still running
     checkConnection(wii)
