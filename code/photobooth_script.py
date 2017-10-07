@@ -46,6 +46,10 @@ image_error = '_error.png'
 image_instruction = '_instructions.png'
 image_saving = '_saving.png'
 image_smile = '_smile.png'
+image_german = 'de_flag.png'
+image_english = 'en_flag.png'
+image_selected = 'image_selected_language.png'
+image_plusbutton = 'image_left_right.png'
 
 
 ############################
@@ -128,7 +132,7 @@ def show_image(image_name, language_flag):
 # if an error occured show the error image and then close the image after 30 seconds and quit
 def show_error_image(msg):
     screen_size = init_pygame()
-    img = loadImage(image_error)
+    img = loadImage(image_error,1)
     # following lines moving image to the center of screen
     imgSize = img.get_size()
     offset_x = (screen_size[0] - imgSize[0])/2
@@ -148,12 +152,9 @@ def show_image_start_screen(image_name):
     screen_size = init_pygame()
     random_filename = random.choice([x for x in os.listdir(storage_path) if os.path.isfile(os.path.join(storage_path,x))])
     img = pygame.image.load(storage_path + random_filename)
-    imgSize = img.get_size()
-    scale_x = int(math.floor(imgSize[0]/3))
-    scale_y = int(math.floor(imgSize[1]/3))
-    img_scaled = pygame.transform.scale(img,(scale_x,scale_y))
+    img_scaled = scaleImage(img,1/3.0)
     screen = pygame.display.get_surface()
-    screen.blit(img_scaled, (300,500))
+    screen.blit(img_scaled, (400,500))
     pygame.display.flip()
 
 # load image function for choosen language
@@ -164,6 +165,51 @@ def loadImage(image_name, language_flag):
         image_full_name = image_path + image_name
     image = pygame.image.load(image_full_name)
     return image
+
+# display options for language (currently germand and english)
+def display_language_options():
+    flag_german = loadImage(image_german,0)
+    flag_english = loadImage(image_english,0)
+    selected = loadImage(image_selected,0)
+    wiiplus = loadImage(image_plusbutton,0)
+    scaledFlag_german = scaleTo(flag_german, 100, 0)
+    scaledFlag_english = scaleTo(flag_english, 100, 0)
+    scaledSelected = scaleTo(selected, 110, 0)
+    scaledWiiplus = scaleTo(wiiplus, 0, 62)
+    screen = pygame.display.get_surface()
+    if(image_language == 'de'):
+        screen.blit(scaledSelected,(45,745))
+    else:
+        screen.blit(scaledSelected,(227,745))
+    screen.blit(scaledFlag_german,(50,750))
+    screen.blit(scaledWiiplus,(160,750))
+    screen.blit(scaledFlag_english,(232,750))
+    pygame.display.flip()
+
+# helper funtion for scaling images (scaling factor needs to be float value)
+def scaleImage(image, scale):
+    imgSize = image.get_size()
+    width  = int(math.floor(imgSize[0]*scale))
+    heigth = int(math.floor(imgSize[1]*scale))
+    image_scaled = pygame.transform.scale(image,(width,heigth))
+    return image_scaled
+
+# helper function for scaling to a certain width or heigth
+# the wanted width or heigth need to be non zero otherwise the smaller scale is choosen
+def scaleTo(image, width = 0, heigth = 0):
+    imgSize = image.get_size()
+    scale = 1
+    if(width != 0):
+        scale = float(width)/imgSize[0]
+    if(heigth != 0):
+        scale = float(heigth)/imgSize[1]
+    if(width != 0 & heigth != 0):
+        scaleWidth = float(width)/imgSize[0]
+        scaleHeigth = float(heigth)/imgSize[1]
+        scale = scaleWidth if scaleWidth < scaleHeigth else scaleHeigth
+    print("Scale: " + str(scale))
+    image_scaled = scaleImage(image,scale)
+    return image_scaled
 
 ##########################################  
 # the main photobooth programm.          #
@@ -215,6 +261,7 @@ def start_photobooth_A(storage_path):
 
     # finish photo session and show instruction image again
     show_image(image_instruction,1)
+    display_language_options()
 
 
 #####################
@@ -234,6 +281,7 @@ storage_path = setupDataStorage()
 show_image(image_started,1)
 time.sleep(2)
 show_image(image_instruction,1)
+display_language_options()
 
 start_time = time.time()
 
@@ -256,9 +304,11 @@ while True:
     if(buttons - cwiid.BTN_LEFT == 0):
         image_language = 'de'
         show_image(image_instruction,1)
+        display_language_options()
     if(buttons - cwiid.BTN_RIGHT == 0):
         image_language = 'en'
         show_image(image_instruction,1)
+        display_language_options()
 
     # check if wii connection is still running
     checkConnection(wii)
