@@ -15,6 +15,7 @@ import pygame
 import math
 import random
 import shutil
+import wifi
 
 #####################
 ###   variables   ###
@@ -32,6 +33,10 @@ count_time = 0.4
 image_path = parent_path + '/images/'
 image_language = 'en'
 pygame.surface = None
+advanced_setup = 0
+
+# advanced setup variables
+wlan_connection = None
 
 # images
 image_blank = 'blank.png'
@@ -267,6 +272,9 @@ def start_photobooth_A(storage_path):
 #####################
 ### main programe ###
 #####################
+# if advanced setup variable is set run the setup first
+if(advanced_setup)
+    run_advanced_setup()
 # prepare the wii remote and establish the bt connection
 wii = prepareWiiRemote()
 # if remote is not useable exit program with error message
