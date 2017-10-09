@@ -4,7 +4,7 @@
 
 # this is a skript for a interactive photobooth
 
-# imports
+# import lib
 import time
 import picamera
 import cwiid
@@ -14,6 +14,9 @@ import pygame
 import math
 import random
 import shutil
+
+# import own files
+import wifi_detection
 
 #####################
 ###   variables   ###
@@ -29,9 +32,10 @@ count_time = 0.4
 
 # default variables
 image_path = parent_path + '/images/'
+font_path = parent_path + '/font/'
 image_language = 'en'
 pygame.surface = None
-advanced_setup = 0
+advanced_setup = 1
 
 # advanced setup variables
 wlan_connection = None
@@ -53,6 +57,29 @@ image_german = 'de_flag.png'
 image_english = 'en_flag.png'
 image_selected = 'image_selected_language.png'
 image_plusbutton = 'image_left_right.png'
+
+# font
+font_board = 'erasdust.ttf'
+
+########################
+###  advaned setup   ###
+########################
+# try to establish an wifi detection
+def run_advanced_setup():
+    pygame.init()
+    screen_size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+    screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+    cells = wifi_detection.searchWifi()
+    show_wifi_networks(cells)
+    i=0
+    for cell in cells:
+        print '['+str(i)+']:' + cell.ssid
+        i=i+1
+
+    # get number from user and try to connect to selected wifi
+    user_input = raw_input("Please type password:")
+    print 'Try to connect to: '+ cells[int(user_input)].ssid
+    print wifi_detection.connectToWifi(cells[int(user_input)].ssid)
 
 
 ############################
@@ -189,6 +216,28 @@ def display_language_options():
     screen.blit(scaledFlag_english,(232,750))
     pygame.display.flip()
 
+# show wifi options on screen
+def show_wifi_networks(cells):
+    numberOfWifi = len(cells)
+    
+    heigth = pygame.display.Info().current_h
+    font_padding = 3
+    font_size = heigth/(numberOfWifi + font_padding)
+    
+    font = pygame.font.Font(font_path + font_board, font_size)
+    print 'Loaded font:' + font_path + font_board
+    
+    # update screen
+    screen = pygame.display.get_surface()
+    fg = 255,255,255
+    surf = font.render(cells[1].ssid, True, fg)
+    background = loadImage(image_blank,0)
+    screen.blit(background,(0,0))
+    screen.blit(surf,(0,0))
+    pygame.display.flip()
+    time.sleep(2)
+    
+
 # helper funtion for scaling images (scaling factor needs to be float value)
 def scaleImage(image, scale):
     imgSize = image.get_size()
@@ -273,6 +322,7 @@ def start_photobooth_A(storage_path):
 # if advanced setup variable is set run the setup first
 if(advanced_setup):
     run_advanced_setup()
+exit()
 # prepare the wii remote and establish the bt connection
 wii = prepareWiiRemote()
 # if remote is not useable exit program with error message
