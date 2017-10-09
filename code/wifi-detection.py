@@ -1,5 +1,6 @@
-# wifi detection
-
+##################
+# wifi detection #
+##################
 import wifi
 
 # searching for available wifi networks

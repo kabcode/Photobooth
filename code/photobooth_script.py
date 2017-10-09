@@ -5,7 +5,6 @@
 # this is a skript for a interactive photobooth
 
 # imports
-from constants import SUCCESS, FAILURE
 import time
 import picamera
 import cwiid
@@ -15,7 +14,6 @@ import pygame
 import math
 import random
 import shutil
-import wifi
 
 #####################
 ###   variables   ###
@@ -273,7 +271,7 @@ def start_photobooth_A(storage_path):
 ### main programe ###
 #####################
 # if advanced setup variable is set run the setup first
-if(advanced_setup)
+if(advanced_setup):
     run_advanced_setup()
 # prepare the wii remote and establish the bt connection
 wii = prepareWiiRemote()
