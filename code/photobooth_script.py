@@ -221,19 +221,28 @@ def show_wifi_networks(cells):
     numberOfWifi = len(cells)
     
     heigth = pygame.display.Info().current_h
-    font_padding = 3
-    font_size = heigth/(numberOfWifi + font_padding)
+    font_padding = 50
+    font_size = (heigth-numberOfWifi*3)/(numberOfWifi + 2)
     
     font = pygame.font.Font(font_path + font_board, font_size)
     print 'Loaded font:' + font_path + font_board
     
-    # update screen
+    # update screen with all available networks
     screen = pygame.display.get_surface()
-    fg = 255,255,255
-    surf = font.render(cells[1].ssid, True, fg)
     background = loadImage(image_blank,0)
     screen.blit(background,(0,0))
-    screen.blit(surf,(0,0))
+    fg = 255,255,255
+
+    surf = font.render("Choose a wifi:", True, fg)
+    screen.blit(surf,(font_padding/5,0))
+    for i in range(0,numberOfWifi):
+        text = "["+str(i)+u"]:    " +cells[i].ssid
+        if i==1:
+            text = "["+str(i)+u"]:     " +cells[i].ssid
+        surf = font.render(text, True, fg)
+        screen.blit(surf,(font_padding,(i+1)*font_size))
+    surf = font.render("Cancel", True, fg)
+    screen.blit(surf,(font_padding/5,(numberOfWifi+1)*font_size))
     pygame.display.flip()
     time.sleep(2)
     
