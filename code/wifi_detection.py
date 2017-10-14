@@ -5,9 +5,7 @@ import wifi
 
 # searching for available wifi networks
 def searchWifi():
-    cells = None
     cells = wifi.Cell.all('wlan0')
-
     return cells
 
 # select a wifi from list by ssid
@@ -71,13 +69,13 @@ if __name__ == '__main__':
 
     i = 0
     for cell in cells:
-        print '['+str(i)+']:' + cell.ssid
+        print '['+str(i)+']:\t' + cell.ssid
+        print '\t\t' + str(cell.quality)
+        print '\t\t' + str(cell.signal)
         i=i+1
 
     # get number from user and try to connect to selected wifi
-    user_input = raw_input("Please type password:")
-    print 'Try to connect to: '+ cells[int(user_input)].ssid
-    print connectToWifi(cells[int(user_input)].ssid)
+    
     
     
 

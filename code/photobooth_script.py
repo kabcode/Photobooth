@@ -2,7 +2,7 @@
 # created by kabcode@gmail.com
 # information and further details can be found under www.kabelitzens.de
 
-# this is a skript for a interactive photobooth
+# this is a script for a interactive photobooth
 
 # import lib
 import time
@@ -17,6 +17,7 @@ import shutil
 
 # import own files
 import wifi_detection
+import helper
 
 #####################
 ###   variables   ###
@@ -36,9 +37,11 @@ font_path = parent_path + '/font/'
 image_language = 'en'
 pygame.surface = None
 advanced_setup = 1
+wii = None
 
 # advanced setup variables
-wlan_connection = None
+global wlan_connection
+wlan_connection = 1
 
 # images
 image_blank = 'blank.png'
@@ -70,16 +73,8 @@ def run_advanced_setup():
     screen_size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
     screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
     cells = wifi_detection.searchWifi()
-    show_wifi_networks(cells)
-    i=0
-    for cell in cells:
-        print '['+str(i)+']:' + cell.ssid
-        i=i+1
-
-    # get number from user and try to connect to selected wifi
-    user_input = raw_input("Please type password:")
-    print 'Try to connect to: '+ cells[int(user_input)].ssid
-    print wifi_detection.connectToWifi(cells[int(user_input)].ssid)
+    wii = None
+    show_wifi_networks(cells,wii)
 
 
 ############################
@@ -217,34 +212,67 @@ def display_language_options():
     pygame.display.flip()
 
 # show wifi options on screen
-def show_wifi_networks(cells):
+def show_wifi_networks(cells,wii,selected=0,done=1):
+    # compute font size w.r.t. number of wifi networks
+    if done:
+        wii = prepareWiiRemote()
+        done = 0
+    
     numberOfWifi = len(cells)
-    
-    heigth = pygame.display.Info().current_h
+    print ('Cells:' + str(len(cells)))
+    height = pygame.display.Info().current_h
     font_padding = 50
-    font_size = (heigth-numberOfWifi*3)/(numberOfWifi + 2)
-    
+    font_size = int(math.floor((height)/(numberOfWifi + 2)*0.75)) # taking in consideration the ascent and descent of a font
+    # load font
     font = pygame.font.Font(font_path + font_board, font_size)
-    print 'Loaded font:' + font_path + font_board
-    
+    line_size = font.get_height()
+    position = []
+    for i in range(0,numberOfWifi+1):
+        position.append([20, (i+1)*line_size])
     # update screen with all available networks
     screen = pygame.display.get_surface()
     background = loadImage(image_blank,0)
     screen.blit(background,(0,0))
     fg = 255,255,255
-
     surf = font.render("Choose a wifi:", True, fg)
-    screen.blit(surf,(font_padding/5,0))
+    screen.blit(surf,(font_padding/5,0)) 
     for i in range(0,numberOfWifi):
-        text = "["+str(i)+u"]:    " +cells[i].ssid
+        text = "[" + str(i) + "]:    " + cells[i].ssid
         if i==1:
-            text = "["+str(i)+u"]:     " +cells[i].ssid
+            text = "[" + str(i) + "]:     " + cells[i].ssid
         surf = font.render(text, True, fg)
-        screen.blit(surf,(font_padding,(i+1)*font_size))
+        screen.blit(surf,(font_padding,(i+1)*line_size))
     surf = font.render("Cancel", True, fg)
-    screen.blit(surf,(font_padding/5,(numberOfWifi+1)*font_size))
+    screen.blit(surf,(font_padding,(numberOfWifi+1)*line_size))
+    # add frame for currently selected wifi
+    if selected < 0:
+        selected = numberOfWifi
+    if selected > numberOfWifi:
+        selected = 0
+    frame_color = 213,124,34
+    frame = pygame.Rect(position[selected],(pygame.display.Info().current_w-50,line_size));
+    pygame.draw.rect(screen, frame_color,frame,5)
     pygame.display.flip()
-    time.sleep(2)
+    # selecting process
+    
+    while True:
+        buttons = wii.state['buttons']
+        
+        if(buttons - cwiid.BTN_DOWN == 0):
+            print selected
+            show_wifi_networks(cells,wii,selected+1,done)
+        if(buttons - cwiid.BTN_UP == 0):
+            print selected
+            show_wifi_networks(cells,wii,selected-1,done)
+        if(buttons - cwiid.BTN_A == 0):
+            print selected
+            if selected == numberOfWifi:
+                print 'Cancel selection.'
+                return
+            else:
+                print 'connect to:' + cells[selected].ssid
+                return
+    return
     
 
 # helper funtion for scaling images (scaling factor needs to be float value)
@@ -328,61 +356,59 @@ def start_photobooth_A(storage_path):
 #####################
 ### main programe ###
 #####################
-# if advanced setup variable is set run the setup first
-if(advanced_setup):
-    run_advanced_setup()
-exit()
-# prepare the wii remote and establish the bt connection
-wii = prepareWiiRemote()
-# if remote is not useable exit program with error message
-if(wii == None):
-    show_error_image("No wiimote connection established.")
+if __name__ == '__main__':
+    # if advanced setup variable is set run the setup first
+    if(advanced_setup):
+        run_advanced_setup()
+    helper.script_shutdown()
+    # prepare the wii remote and establish the bt connection
+    wii = prepareWiiRemote()
+    # if remote is not useable exit program with error message
+    if(wii == None):
+        show_error_image("No wiimote connection established.")
 
-# set the parameter for data storage
-# real_path is were the images are stored
-storage_path = setupDataStorage()
-
-# show the instroduction image
-show_image(image_started,1)
-time.sleep(2)
-show_image(image_instruction,1)
-display_language_options()
-
-start_time = time.time()
-
-while True:
-
-    # wait for input via the buttons
-    buttons = wii.state['buttons']
-
-    # if "+" and "-" buttons pressed together, shut down photobooth
-    if (buttons - cwiid.BTN_PLUS - cwiid.BTN_MINUS == 0):
-        pygame.display.quit()
-        stopWiimoteConnection(wii)
-        sys.exit();
-
-    # if "A" button is pressed, start the photobooth action
-    if(buttons & cwiid.BTN_A):
-        start_photobooth_A(storage_path)
-
-    # if the left or right button are pressed, switch language
-    if(buttons - cwiid.BTN_LEFT == 0):
-        image_language = 'de'
-        show_image(image_instruction,1)
-        display_language_options()
-    if(buttons - cwiid.BTN_RIGHT == 0):
-        image_language = 'en'
-        show_image(image_instruction,1)
-        display_language_options()
-
-    # check if wii connection is still running
-    checkConnection(wii)
-
-    # place images taken images on screen, change image every 5 seconds
-    end_time = time.time()
-    if((end_time-start_time) > 5):
-        show_image_start_screen(storage_path)
-        start_time = time.time()
+    # set the parameter for data storage
+    # real_path is were the images are stored
+    storage_path = setupDataStorage()
     
-  
- 
+    # show the instroduction image
+    show_image(image_started,1)
+    time.sleep(2)
+    show_image(image_instruction,1)
+    display_language_options()
+    
+    start_time = time.time()
+    
+    while True:
+    
+        # wait for input via the buttons
+        buttons = wii.state['buttons']
+    
+        # if "+" and "-" buttons pressed together, shut down photobooth
+        if (buttons - cwiid.BTN_PLUS - cwiid.BTN_MINUS == 0):
+            pygame.display.quit()
+            stopWiimoteConnection(wii)
+            sys.exit();
+    
+        # if "A" button is pressed, start the photobooth action
+        if(buttons & cwiid.BTN_A):
+            start_photobooth_A(storage_path)
+    
+        # if the left or right button are pressed, switch language
+        if(buttons - cwiid.BTN_LEFT == 0):
+            image_language = 'de'
+            show_image(image_instruction,1)
+            display_language_options()
+        if(buttons - cwiid.BTN_RIGHT == 0):
+            image_language = 'en'
+            show_image(image_instruction,1)
+            display_language_options()
+    
+        # check if wii connection is still running
+        checkConnection(wii)
+    
+        # place images taken images on screen, change image every 5 seconds
+        end_time = time.time()
+        if((end_time-start_time) > 5):
+            show_image_start_screen(storage_path)
+            start_time = time.time()
