@@ -73,8 +73,31 @@ def run_advanced_setup():
     screen_size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
     screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
     cells = wifi_detection.searchWifi()
-    wii = None
-    show_wifi_networks(cells,wii)
+    wii = prepareWiiRemote()
+    select_wifi(cells,wii)
+
+# selection process for wifi
+def select_wifi(cells, wii, selected=0):
+    show_wifi_networks(cells)
+    while True:
+        buttons = wii.state['buttons']
+        
+        if(buttons - cwiid.BTN_DOWN == 0):
+            selected = helper.is_outside_range(selected+1,0,len(cells))
+            print selected
+            show_wifi_networks(cells,selected)
+        if(buttons - cwiid.BTN_UP == 0):
+            selected = helper.is_outside_range(selected-1,0,len(cells))
+            print selected
+            show_wifi_networks(cells,selected)
+        if(buttons - cwiid.BTN_A == 0):
+            print selected
+            if selected == len(cells):
+                print 'Cancel selection.'
+            else:
+                print 'connect to:' + cells[selected].ssid
+            break
+            
 
 
 ############################
@@ -212,12 +235,8 @@ def display_language_options():
     pygame.display.flip()
 
 # show wifi options on screen
-def show_wifi_networks(cells,wii,selected=0,done=1):
+def show_wifi_networks(cells,selected=0):
     # compute font size w.r.t. number of wifi networks
-    if done:
-        wii = prepareWiiRemote()
-        done = 0
-    
     numberOfWifi = len(cells)
     print ('Cells:' + str(len(cells)))
     height = pygame.display.Info().current_h
@@ -245,35 +264,10 @@ def show_wifi_networks(cells,wii,selected=0,done=1):
     surf = font.render("Cancel", True, fg)
     screen.blit(surf,(font_padding,(numberOfWifi+1)*line_size))
     # add frame for currently selected wifi
-    if selected < 0:
-        selected = numberOfWifi
-    if selected > numberOfWifi:
-        selected = 0
     frame_color = 213,124,34
     frame = pygame.Rect(position[selected],(pygame.display.Info().current_w-50,line_size));
     pygame.draw.rect(screen, frame_color,frame,5)
     pygame.display.flip()
-    # selecting process
-    
-    while True:
-        buttons = wii.state['buttons']
-        
-        if(buttons - cwiid.BTN_DOWN == 0):
-            print selected
-            show_wifi_networks(cells,wii,selected+1,done)
-        if(buttons - cwiid.BTN_UP == 0):
-            print selected
-            show_wifi_networks(cells,wii,selected-1,done)
-        if(buttons - cwiid.BTN_A == 0):
-            print selected
-            if selected == numberOfWifi:
-                print 'Cancel selection.'
-                return
-            else:
-                print 'connect to:' + cells[selected].ssid
-                return
-    return
-    
 
 # helper funtion for scaling images (scaling factor needs to be float value)
 def scaleImage(image, scale):
