@@ -2,6 +2,7 @@
 # helper scripts #
 ##################
 import os
+import pygame.event
 
 # shut down the script without closing the python shell or kill dialog
 def script_shutdown():
@@ -15,7 +16,7 @@ def is_outside_range(a,b=0,c=0):
     if a > c:
         return b
     return a
-    
+
 
 # run by itself
 if __name__ == '__main__':
@@ -27,3 +28,5 @@ if __name__ == '__main__':
     print is_outside_range(2,1,3)
     print is_outside_range(3,1,3)
     print is_outside_range(4,1,3)
+
+    print get_key()

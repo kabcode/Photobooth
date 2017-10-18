@@ -95,7 +95,7 @@ def select_wifi(cells, wii, selected=0):
             if selected == len(cells):
                 print 'Cancel selection.'
             else:
-                print 'connect to:' + cells[selected].ssid
+                wifi_detection.connectToWifi(cells[selected].ssid)
             break
             
 
@@ -269,6 +269,20 @@ def show_wifi_networks(cells,selected=0):
     pygame.draw.rect(screen, frame_color,frame,5)
     pygame.display.flip()
 
+# open input dialog for user input
+def open_input_dialog(ssid=None):
+    font = pygame.font.Font(font_path + font_board, 100)
+    line_size = font.get_height()
+    screen = pygame.display.get_surface()
+    screen_w = pygame.display.Info().current_w
+    screen_h = pygame.display.Info().current_h
+    pygame.draw.rect(screen,(0,0,0),(screen_w/2-100,screen_h/2-int(line_size/2),600,line_size),0)
+    pygame.draw.rect(screen,(255,255,255),(screen_w/2-102,screen_h/2-int(line_size/2)-2,604,line_size+4),2)
+    textsurf=font.render(ssid,1,(255,255,255))
+    screen.blit(textsurf,(screen_w/2-100,screen_h/2-int(line_size/2),200,line_size))
+    pygame.display.flip()
+    time.sleep(4)
+
 # helper funtion for scaling images (scaling factor needs to be float value)
 def scaleImage(image, scale):
     imgSize = image.get_size()
@@ -293,6 +307,15 @@ def scaleTo(image, width = 0, heigth = 0):
     print("Scale: " + str(scale))
     image_scaled = scaleImage(image,scale)
     return image_scaled
+
+# helper function for key detection
+def get_key():
+    while True:
+        event = pygame.event.poll()
+        if event.type == KEYDOWN:
+            return event
+        else:
+            pass
 
 ##########################################  
 # the main photobooth programm.          #

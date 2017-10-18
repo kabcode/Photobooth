@@ -2,6 +2,7 @@
 # wifi detection #
 ##################
 import wifi
+import photobooth_script
 
 # searching for available wifi networks
 def searchWifi():
@@ -21,12 +22,13 @@ def selectFromWifiList(ssid):
 # connect to selected wifi
 def connectToWifi(ssid, password=None):
     cell = selectFromWifiList(ssid)
-    print 'Connecting...' + cell.ssid
+    print 'Connecting to...' + cell.ssid
 
     if cell:
     
         # if wifi is encrypted
         if cell.encrypted:
+            photobooth_script.open_input_dialog(cell.ssid)
             if password:
                 scheme = addWifi(cell, password)
 
@@ -52,7 +54,7 @@ def connectToWifi(ssid, password=None):
 
     # no cell returned
     else:
-        return 'no wifi found'
+        return 'Selected wifi not found'
 
 # add wifi to known wifi list
 def addWifi(cell, password=None):
