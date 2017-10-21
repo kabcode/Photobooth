@@ -98,14 +98,17 @@ def select_wifi(cells, wii, selected=0):
                 print 'Cancel selection.'
             else:
                 if cells[selected].encrypted:
-                    password = get_input_from_user("Password:")
+                    password = get_input_from_user("Enter password, x to cancel:")
+                    if password == 'x':
+                        print "cancel password input"
+                        break
                 wifi_detection.connectToWifi(cells[selected].ssid,password)
             break
             
 # helper function for retrieving user input
-def get_input_from_user(text=None):
+def get_input_from_user(instruction=None):
     current_string = ""
-    open_input_dialog(text)
+    open_input_dialog(instruction)
     while True:
         (key, unchr) = get_key()
         if key == pygame.K_BACKSPACE:
@@ -114,8 +117,7 @@ def get_input_from_user(text=None):
             break
         else:
             current_string = current_string + unchr       
-            msg = text + current_string
-        open_input_dialog(msg)
+        open_input_dialog(instruction, current_string)
 
     return current_string
 
@@ -299,16 +301,19 @@ def show_wifi_networks(cells,selected=0):
     pygame.display.flip()
 
 # open input dialog for user input
-def open_input_dialog(text):
+def open_input_dialog(instruction, current_string=None):
     font = pygame.font.Font(font_path + font_board, 100)
     line_size = font.get_height()
     screen = pygame.display.get_surface()
     screen_w = pygame.display.Info().current_w
     screen_h = pygame.display.Info().current_h
-    pygame.draw.rect(screen,(0,0,0),(screen_w/2-400,screen_h/2-int(line_size/2),800,line_size),0)
-    pygame.draw.rect(screen,(255,255,255),(screen_w/2-402,screen_h/2-int(line_size/2)-2,804,line_size+4),2)
-    textsurf=font.render(text,1,(255,255,255))
-    screen.blit(textsurf,(screen_w/2-400,screen_h/2-int(line_size/2),200,line_size))
+    # background and frame for input dialog box
+    pygame.draw.rect(screen,(0,0,0),(int(screen_w*0.1),screen_h-3*line_size,int(0.8*screen_w),2*line_size),0)
+    pygame.draw.rect(screen,(255,255,255),(int(screen_w*0.1)-2,screen_h-3*line_size-2,int(0.8*screen_w)+2,2*line_size+2),2)
+    textsurfInfo=font.render(instruction,1,(255,255,255))
+    screen.blit(textsurfInfo,(int(screen_w*0.1),screen_h-3*line_size,int(0.8*screen_w),line_size))
+    textsurfpass=font.render(current_string,1,(255,255,255))
+    screen.blit(textsurfpass,(int(screen_w*0.1),screen_h-2*line_size,int(0.8*screen_w),line_size))
     pygame.display.flip()
 
 # helper funtion for scaling images (scaling factor needs to be float value)
