@@ -9,7 +9,8 @@ xset s noblank
 
 echo "Start Photobooth..."
 
-python photobooth_script.py
+# the use of sudo is necessary for connecting to a network
+sudo python photobooth_script.py
 
 echo "Shutdown Photobooth..."
 

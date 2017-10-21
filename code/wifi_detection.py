@@ -36,6 +36,8 @@ def connectToWifi(ssid, password=None):
                 #wrong password
                 except wifi.exceptions.ConnectionsError:
                     return 'Wrong password'
+
+                print "Connected to " + cell.ssid
                 return cell
             else:
                 return 'No password provided'
