@@ -99,23 +99,22 @@ def select_wifi(cells, wii, selected=0):
             else:
                 if cells[selected].encrypted:
                     password = get_input_from_user("Password:")
-                    print password
-                wifi_detection.connectToWifi(cells[selected].ssid)
+                wifi_detection.connectToWifi(cells[selected].ssid,password)
             break
             
 # helper function for retrieving user input
 def get_input_from_user(text=None):
-    current_string = []
+    current_string = ""
     open_input_dialog(text)
     while True:
-        key = get_key()
+        (key, unchr) = get_key()
         if key == pygame.K_BACKSPACE:
             current_string = current_string[0:-1]
         elif key == pygame.K_RETURN:
             break
-        elif key <= 127:
-            current_string.append(chr(key))       
-        msg = text + string.join(current_string,"")
+        else:
+            current_string = current_string + unchr       
+            msg = text + current_string
         open_input_dialog(msg)
 
     return current_string
@@ -125,9 +124,8 @@ def get_key():
     while True:
         events = pygame.event.get()
         for event in events:
-            print event.type
             if event.type == pygame.KEYDOWN:
-                return event.key
+                return (event.key, event.unicode)
             else:
                 pass
 
