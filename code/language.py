@@ -4,16 +4,19 @@
 
 """
 This python class is for different language options
-It contains the current language as well as the other language options
+It contains the current language as well as the other language options.
+The language files are loaded or changed on runtime. All used strings are
+placed for each language in a seperate file with a two-letter identification
+of the language. 
 """
 
 from pathlib import Path
 from importlib import util
-import tokenize
+
 
 class LanguageAdapter:
 	 
-	
+	# initiation of the language adapter
 	def __init__(self, photobooth_folder):
 		self.current_language = "en"
 		self.language_folder = photobooth_folder.joinpath('languages')
@@ -22,6 +25,7 @@ class LanguageAdapter:
 		self.cl = None
 		self.set_language(self.current_language)
 		
+	# set language with two letter string for language
 	def set_language(self, language):
 		language_module = language+'.py'
 		print(language_module)
@@ -37,7 +41,8 @@ class LanguageAdapter:
 				self.cl = _module
 		else:
 			print("Error - language not available.")
-		
+	
+	# list the available languages
 	def list_languages(self):
 		for item in Path(self.language_folder).glob('*.py'):
 			if item.is_file():

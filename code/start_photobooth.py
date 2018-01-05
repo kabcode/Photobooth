@@ -10,6 +10,7 @@ from pathlib import Path
 
 # import own libs
 import language as lg
+import network as nw
 
 if __name__ == '__main__':
 	
@@ -18,10 +19,3 @@ if __name__ == '__main__':
 	print(current_folder)
 	
 	global lang = lg.LanguageAdapter(current_folder)
-	print(lang.cl.test)
-	lang.set_language('de')
-	print(lang.cl.test)
-	lang.set_language('it')
-	print(lang.cl.test)
-	lang.set_language('en')
-	print(lang.cl.test)
