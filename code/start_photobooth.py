@@ -18,4 +18,8 @@ if __name__ == '__main__':
 	current_folder = Path.cwd().parent
 	print(current_folder)
 	
-	global lang = lg.LanguageAdapter(current_folder)
+	global lang
+	lang = lg.LanguageAdapter(current_folder)
+	
+	# connect to wifi network
+	net = nw.WifiAdapter()
