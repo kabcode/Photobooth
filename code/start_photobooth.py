@@ -6,20 +6,10 @@
 This python script is the entry point for the photobooth
 """
 # import libs
-from pathlib import Path
-
-# import own libs
-import language as lg
-import network as nw
+import core
 
 if __name__ == '__main__':
 	
-	# get current photobooth folder
-	current_folder = Path.cwd().parent
-	print(current_folder)
 	
-	global lang
-	lang = lg.LanguageAdapter(current_folder)
-	
-	# connect to wifi network
-	net = nw.WifiAdapter()
+	booth = core.Photobooth()
+	booth.start()
