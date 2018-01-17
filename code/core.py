@@ -19,21 +19,37 @@ class Photobooth:
 	# at initialization of photobooth
 	def __init__(self):
 		self.controller = []
+		self.image_folder= []
+		self.current_folder = []
 		self.run_setup()
 		
 	def run_setup(self):
 		print("Run setup")
 		
 		# get current photobooth folder
-		current_folder = Path.cwd().parent
-		print(current_folder)
+		self.current_folder = Path.cwd().parent
+		self.image_folder = self.setup_image_folder()
+		print(self.image_folder)
 		
 		# load default language
 		global lang
-		lang = lg.LanguageAdapter(current_folder)
+		lang = lg.LanguageAdapter(self.current_folder)
 		
 		# initialize controller
 		self.controller = wm.WiimoteAdapter()
+		if self.controller is None:
+			print("Error - No controller")
+		
+	# create a folder for the taken images
+	# the folder has the current date as name
+	def setup_image_folder(self):
+		image_folder = self.current_folder.parent.joinpath(time.strftime('%Y%m%d'))
+		if image_folder.exists():
+			pass
+		else:
+			image_folder.mkdir()
+		return image_folder
+		
 		
 	# start photobooth main function
 	def start(self):
@@ -50,7 +66,7 @@ class Photobooth:
 				break
 				
 			if action == "PHOTO":
-				
+				pass
 		
 		
 		

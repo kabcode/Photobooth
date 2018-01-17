@@ -4,14 +4,16 @@
 
 """
 This module wraps the cwiid lib for more convenient handling of
-the wiiremote  
+the wiiremote. It inherits all important functions from the controller
+interface.
 """
 
 # imports
 import cwiid
 import time
+import controller
 
-class WiimoteAdapter:
+class WiimoteAdapter(controller.ControllerInterface):
 	
 	def __init__(self):
 		self.wiimote = self.connect()
