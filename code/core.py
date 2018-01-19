@@ -10,9 +10,11 @@ and has the logic build in.
 # libraries that are always needed
 from pathlib import Path
 import language as lg
-import wiimote  as wm
-import picamera as picam
 import time
+
+# imports for own controller and camera module
+import wiimote  as wm
+import picam as pc
 
 class Photobooth:
 	
@@ -39,7 +41,10 @@ class Photobooth:
 		self.controller = wm.WiimoteAdapter()
 		if self.controller is None:
 			print("Error - No controller")
-		
+			
+		# initialize camera
+		self.camera = pc.PicameraAdapter()
+				
 	# create a folder for the taken images
 	# the folder has the current date as name
 	def setup_image_folder(self):
@@ -50,7 +55,15 @@ class Photobooth:
 			image_folder.mkdir()
 		return image_folder
 		
+	# save photo in image folder
+	def save_photo(self, photo):
+		pass
 		
+	# take a photo as PIL object with the connected camera
+	def take_photo(self):
+		photo = self.camera.take_picture()
+		save_photo(photo)
+				
 	# start photobooth main function
 	def start(self):
 		i = 0
@@ -66,6 +79,7 @@ class Photobooth:
 				break
 				
 			if action == "PHOTO":
+				self.take_photo()
 				pass
 		
 		
