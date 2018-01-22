@@ -8,7 +8,7 @@ the wiiremote. It inherits all important functions from the controller
 interface.
 """
 
-# imports
+# libraries import
 import cwiid
 import time
 import controller
