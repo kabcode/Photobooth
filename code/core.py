@@ -14,7 +14,7 @@ import time
 
 # imports for own controller and camera module
 import wiimote  as wm
-import picam as pc
+import picam as pcm
 
 class Photobooth:
 	
@@ -40,20 +40,21 @@ class Photobooth:
 			print("Error - No controller")
 			
 		# initialize camera
-		self.camera = pc.PicameraAdapter()
+		self.camera = pcm.PicameraAdapter()
 				
 		
 	# take a photo as PIL object with the connected camera
 	def take_photo(self):
-		photo = self.camera.take_picture()
-		save_photo(photo)
+		print("take picture")
+		photo = self.camera.take_photo()
+		self.file_handler.save_photo(photo)
 				
 	# start photobooth main function
 	def start(self):
 		i = 0
 		while True:
 			
-			time.sleep(0.08) # avoid endless test texts by pressing a button
+			time.sleep(0.1) # avoid endless test texts by pressing a button
 			
 			# get the action from controller
 			action = self.controller.get_action()
@@ -65,6 +66,11 @@ class Photobooth:
 			if action == "PHOTO":
 				self.take_photo()
 				pass
+				
+			if action == "ERROR":
+				break
+				
+			
 		
 		
 		
