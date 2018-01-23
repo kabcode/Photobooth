@@ -23,6 +23,7 @@ class PicameraAdapter(camera.CameraInterface):
 	def __init__(self):
 		self.camera = pc.PiCamera()
 		self.camera.resolution = (1920, 1080)
+		self.camera.framerate = 10
 
 	# take a picture and turn it into a PIL image
 	def take_photo(self):
