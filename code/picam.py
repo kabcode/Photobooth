@@ -13,7 +13,7 @@ in the PiCamera library. Its for consistency with the CameraInterface.
 # libraries import
 import camera
 import picamera as pc
-from io import BytesIO
+import picamera.array
 from time import sleep
 from PIL import Image
 
@@ -25,18 +25,18 @@ class PicameraAdapter(camera.CameraInterface):
 		self.camera.resolution = (1920, 1080)
 
 	# take a picture and turn it into a PIL image
-	def take_picture(self):
-		stream = BytesIO()
+	def take_photo(self):
+		self.give_feedback("take_photo")
+		capture = pc.array.PiRGBArray(self.camera)
 		self.activate_preview()
 		sleep(2)
-		self.camera.capture(stream, format='jpeg')
+		self.camera.capture(capture, format='bgr')
 		self.deactivate_preview()
-		stream.seek(0)
-		image = Image.open(stream)
-		return image
+		return capture.array
 	
 	# activate the preview for 
 	def activate_preview(self):
+		self.give_feedback("activate_preview")
 		try:
 			self.camera.start_preview(alpha=255,fullscreen=False, window=(0,0,200,200))
 		except all:
@@ -44,7 +44,12 @@ class PicameraAdapter(camera.CameraInterface):
 	
 	# deactivate preview
 	def deactivate_preview(self):
+		self.give_feedback("deactivate_preview")
 		self.camera.stop_preview()
+		
+	# gives feedback for debuging
+	def give_feedback(self, msg):
+		print("FEEDBACK: " + msg)
 		
 		
 	

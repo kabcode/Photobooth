@@ -13,7 +13,7 @@ import abc
 class CameraInterface(abc.ABC):
 	
 	@abc.abstractmethod
-	def take_picture(self):
+	def take_photo(self):
 		pass
 		
 	@abc.abstractmethod
@@ -22,4 +22,8 @@ class CameraInterface(abc.ABC):
 		
 	@abc.abstractmethod
 	def deactivate_preview(self):
+		pass
+		
+	@abc.abstractmethod
+	def give_feedback(msg,self):
 		pass
