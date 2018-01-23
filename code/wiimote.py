@@ -43,16 +43,19 @@ class WiimoteAdapter(controller.ControllerInterface):
 			self.wiimote.rumble = 0
 			time.sleep(0.5)
 		self.wiimote.close()
-		
+				
 		
 	# get action defined by button state
 	def get_action(self):
-		
+		if self.wiimote is None:
+			print("Error - No wiimote connected")
+			return "ERROR"
+			
 		buttons = self.wiimote.state['buttons']
 		
 		# if "A" button is pressed: print "ACTION"
 		if(buttons & cwiid.BTN_A):
-			return "ACTION"
+			return "PHOTO"
 			
 		# if "+" and "-" are pressed: shutdoen photobooth
 		if (buttons - cwiid.BTN_PLUS - cwiid.BTN_MINUS == 0):
