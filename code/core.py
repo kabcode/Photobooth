@@ -47,6 +47,8 @@ class Photobooth:
 	def take_photo(self):
 		print("take picture")
 		photo = self.camera.take_photo()
+		# if you need to do fancy stuff with the photo do it here!!
+		# photo = self.do_fancy_stuff(photo)
 		self.file_handler.save_photo(photo)
 				
 	# start photobooth main function

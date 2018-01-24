@@ -5,7 +5,7 @@
 """
 This module takes care of the files. Especially the storage of images. 
 The default is to save images to the SD-Card without any changes. With
-the adveanced features more processing can be done and the images can be
+the advanced features more processing can be done and the images can be
 to an online drive.
 """
 
