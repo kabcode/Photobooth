@@ -16,6 +16,7 @@ import controller
 class WiimoteAdapter(controller.ControllerInterface):
 	
 	def __init__(self):
+		self.has_wiimote = []
 		self.wiimote = self.connect()
 		
 	# establish bluetooth connection to wiimote	
@@ -25,14 +26,16 @@ class WiimoteAdapter(controller.ControllerInterface):
 			wii = cwiid.Wiimote()
 		except:
 			print("Error - No wiimote found.")
-			return None
+			self.has_wiimote = False
+			return
 
 		wii.rumble = 1
 		time.sleep(1)
 		wii.rumble = 0
 		print ("Wiimote connected.")
 		# set wiimote in button mode
-		wii.rpt_mode = cwiid.RPT_BTN    
+		wii.rpt_mode = cwiid.RPT_BTN 
+		self.has_wiimote = True   
 		return wii
 		
 	# close connection to wiimote
@@ -43,7 +46,10 @@ class WiimoteAdapter(controller.ControllerInterface):
 			self.wiimote.rumble = 0
 			time.sleep(0.5)
 		self.wiimote.close()
-				
+			
+	# get current state of wii controller
+	def is_active(self):
+			return self.has_wiimote
 		
 	# get action defined by button state
 	def get_action(self):

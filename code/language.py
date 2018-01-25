@@ -28,7 +28,6 @@ class LanguageAdapter:
 	# set language with two letter string for language
 	def set_language(self, language):
 		language_module = language+'.py'
-		print(language_module)
 		if language_module in self.language_list:
 			self.current_language = language
 			_spec = util.spec_from_file_location(language, self.language_folder.joinpath(language_module).__str__())

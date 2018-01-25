@@ -21,8 +21,7 @@ class FileHandler():
 		self.current_folder = Path.cwd().parent
 		self.image_folder = self.setup_image_folder()
 		self.storage_methods = ['default']
-		print(self.current_folder)
-		print(self.image_folder)
+		print("Imagefolder: " + str(self.image_folder))
 		
 	# create a folder for the taken images
 	# the folder has the current date as name
