@@ -26,5 +26,10 @@ class ControllerInterface(abc.ABC):
 	@abc.abstractmethod
 	def get_action(self):
 		pass
+		
+	# check for state of controller
+	@abc.abstractmethod
+	def is_active(self):
+		pass
 	
 		

@@ -14,6 +14,7 @@ import time
 
 # imports for own controller and camera module
 import wiimote  as wm
+import keyboard as kb
 import picam as pcm
 
 class Photobooth:
@@ -34,10 +35,11 @@ class Photobooth:
 		global lang
 		lang = lg.LanguageAdapter(self.file_handler.current_folder)
 		
-		# initialize controller
+		# initialize controller (default is keyboard)
 		self.controller = wm.WiimoteAdapter()
-		if self.controller is None:
-			print("Error - No controller")
+		if not self.controller.is_active():
+			self.controller = kb.KeyboardAdapter()
+			print("Set keyboard as default controller")
 			
 		# initialize camera
 		self.camera = pcm.PicameraAdapter()
