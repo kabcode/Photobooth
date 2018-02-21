@@ -1,6 +1,6 @@
 # Custom files
 # =========================
-api_keys.ini
+api_keys.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
