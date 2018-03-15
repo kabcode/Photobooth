@@ -10,10 +10,11 @@ networks are listed and the user can chose which one to use.
 
 # imports
 import pywifi
+import requests
 from pywifi import const
 from time import sleep
 
-class WifiAdapter:
+class NetworkAdapter:
 	
 	# initiation of the wifi adapter
 	def __init__(self):
@@ -88,7 +89,17 @@ class WifiAdapter:
 		else:
 			print("Error - Selected wifi not found")
 
-    
+    # check for internet connection with the selected wifi
+    def check_internet_connection(self):
+		if self.iface.status == const.IFACE_CONNECTED:
+			req = []
+			try:
+				req = requests.get("https://google.com")
+			except:
+				print("Error - Internet network connection lost.")
+		else:
+			print("Error - No wifi connection.")
+				
 			
 		
 		

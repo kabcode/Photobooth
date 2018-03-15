@@ -7,22 +7,28 @@ This is the core component of the photobooth. It makes use of all modules
 and has the logic build in. 
 """
 
+# libraries that needed but not custom
+import time
+from  PyQt5.QtCore import (QObject, pyqtSlot)
+
 # libraries that are always needed
 import language as lg
 import filehandler as fh
-import time
 
 # imports for own controller and camera module
 import wiimote  as wm
 import keyboard as kb
 import picam as pcm
+import network as nw
 
-class Photobooth:
+class Photobooth(QObject):
 	
 	# at initialization of photobooth
-	def __init__(self):
+	def __init__(self, parent=None):
+		super().__init__(parent)
 		self.controller = []
-		self.file_handler = [] 
+		self.file_handler = []
+		self.userinterface = [] 
 		self.run_setup()
 		
 	def run_setup(self):
@@ -43,18 +49,29 @@ class Photobooth:
 			
 		# initialize camera
 		self.camera = pcm.PicameraAdapter()
+		print("Setup done.")
+		
+		# initialize a network connection
+		self.network = nw.NetworkAdapter()
+		
 				
 		
-	# take a photo as PIL object with the connected camera
+	# take a photo as OpenCV object with the connected camera
 	def take_photo(self):
 		print("take picture")
 		photo = self.camera.take_photo()
 		# if you need to do fancy stuff with the photo do it here!!
 		# photo = self.do_fancy_stuff(photo)
 		self.file_handler.save_photo(photo)
+		
+	@pyqtSlot()
+	def started(self):
+		print("Running...")
 				
 	# start photobooth main function
+	@pyqtSlot()
 	def start(self):
+		print("Booth started.")
 		i = 0
 		while True:
 			
