@@ -21,7 +21,6 @@ class ControllerInterface(abc.ABC):
 	def disconnect(self):
 		pass
 		
-		
 	# get action defined by controller state
 	@abc.abstractmethod
 	def get_action(self):

@@ -53,7 +53,9 @@ class Photobooth(QObject):
 		
 		# initialize a network connection
 		self.network = nw.NetworkAdapter()
-		
+		ssid = "-wifi_name"
+		password = "-wifi-password-"
+		self.network.connect_to_wifi(ssid,password)
 				
 		
 	# take a photo as OpenCV object with the connected camera
